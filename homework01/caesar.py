@@ -1,56 +1,44 @@
-def encrypt_caesar(plaintext, shift):
+def encrypt_caesar(plaintext: str) -> str:
     """
-    Encrypts plaintext using a Caesar cipher.
-    >>> encrypt_caesar("PYTHON", 3)
+    >>> encrypt_caesar("PYTHON")
     'SBWKRQ'
-    >>> encrypt_caesar("python", 3)
+    >>> encrypt_caesar("python")
     'sbwkrq'
-    >>> encrypt_caesar("Python3.6", 3)
+    >>> encrypt_caesar("Python3.6")
     'Sbwkrq3.6'
-    >>> encrypt_caesar("", 3)
+    >>> encrypt_caesar("")
     ''
     """
-    ciphertext = ""
-    for char in plaintext:
-        if "A" <= char <= "z":
-            symbol = ord(char) + shift % 26
-
-            if "A" <= char <= "Z" < chr(symbol):
-                symbol -= 26
-
-            elif chr(symbol) > "z":
-                symbol -= 26
-
-            char = chr(symbol)
-        ciphertext += char
-
+    ciphertext = ''
+    for x in plaintext:
+        if 'a' <= x <= 'z' or 'A' <= x <= 'Z':
+            code = ord(x) + 3
+            if code > ord('Z') and code < ord('a') or code > ord('z'):
+                code -= 26
+            ciphertext += chr(code)
+        else:
+            ciphertext += x
     return ciphertext
 
 
-def decrypt_caesar(ciphertext, shift):
+def decrypt_caesar(ciphertext: str) -> str:
     """
-     Decrypts a ciphertext using a Caesar cipher.
-     >>> decrypt_caesar("SBWKRQ", 3)
-     'PYTHON'
-     >>> decrypt_caesar("sbwkrq", 3)
-     'python'
-     >>> decrypt_caesar("Sbwkrq3.6", 3)
-     'Python3.6'
-     >>> decrypt_caesar("", 3)
-     ''
-     """
-    plaintext = ""
-    for char in ciphertext:
-        if "A" <= char <= "z":
-            enc = ord(char) - shift % 26
-
-            if enc < ord("A"):
-                enc += 26
-
-            if "a" <= char <= "z" and enc < ord("a"):
-                enc += 26
-
-            char = chr(enc)
-        plaintext += char
-
+    >>> decrypt_caesar("SBWKRQ")
+    'PYTHON'
+    >>> decrypt_caesar("sbwkrq")
+    'python'
+    >>> decrypt_caesar("Sbwkrq3.6")
+    'Python3.6'
+    >>> decrypt_caesar("")
+    ''
+    """
+    plaintext = ''
+    for x in ciphertext:
+        if 'a' <= x <= 'z' or 'A' <= x <= 'Z':
+            code = ord(x) - 3
+            if code < ord('a') and code > ord('Z') or code < ord('A'):
+                code += 26
+            plaintext += chr(code)
+        else:
+            plaintext += x
     return plaintext
