@@ -179,6 +179,7 @@ def check_solution(solution: List[List[str]]) -> bool:
     return grid
 
 
+
 if __name__ == '__main__':
     for fname in ['puzzle1.txt', 'puzzle2.txt', 'puzzle3.txt']:
         grid = read_sudoku(fname)
