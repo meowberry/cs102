@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+{% if request.GET.msg %}
+<div class="row">
+  <div class="alert alert-primary" role="alert">
+    {{ request.GET.msg }}
+  </div>
+</div>
+{% endif %}
+<div class="row">
+  <div class="col-md-5">
+    {% if request.GET.filter_tag %}
+      <h3>Searched:
+          <a class="badge" style="background-color: #bccfcf;">{{request.GET.filter_tag}}
+              </a>
+      </h3>
+    {% elif request.GET.filter_name %}
+      <h3>Searched:
+          <a style="font-size: 13pt">{{request.GET.filter_name}}
+          </a></h3>
+    {% endif %}
+
+  </div>
+  <div class="col">
+    <form action="{% url 'notes:index' %}"class="form-inline" method="GET">
+      <input name="filter_name" class="form-control" type="search" placeholder="Search" aria-label="Search">
+      <button class="btn btn-outline-info" type="submit">Search</button>
+    </form>
+  </div>
+</div>
+
+{% if latest_note_list %}
+    <ul id="notes">
+    {% for note in latest_note_list %}
+
+      <li  style="position: relative">
+        <p class="row" style='margin: 10px 10px 10px 10px'>
+        		<a class="btn" style="background-color: #b5e6e5;"  href="{% url 'notes:update' note.pk %}">{{ note.title }}</a>
+            
+                <a class="btn" style=" background-color: #e9f3f5; margin: 3px 10px 3px 10px" href="https://twitter.com//intent/tweet?text={{note.content}}{{request.META.HTTP_HOST}}{% url 'notes:detail' note.pk %}"><i class="fa fa-twitter" style="color: #2dabbe; margin: 1px 1px 1px 1px"></i></a>            
+                <a class="btn" style=" background-color: #e9f3f5; margin: 3px 3px 3px 3px" href=" https://vk.com/share.php?text={{note.content}}{{request.META.HTTP_HOST}}{% url 'notes:detail' note.pk %}"><i class="fa fa-vk fa-lg vk" style="color: #2dabbe; margin: 1px 1px 1px 1px"></i></a>
+
+            
+ 
+            <br/>
+        		
+        </p>
+
+        {% for tag in note.tags_list %}
+          {% if tag %}
+            <a href="{% url 'notes:index' %}?filter_tag={{tag}}"  class="badge" style="background-color: #bccfcf;" style='margin: 0px 0px 0px 0px'>{{tag|lower}}</a>
+          {% endif %}
+        {% endfor %}
+
+
+
+        </li>
+        
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No notes are available.</p>
+{% endif %}
+
+{% if is_paginated %}
+<div class="pagination">
+   <span class="step-links">
+       {% if page_obj.has_previous %}
+           <a href="?page={{ page_obj.previous_page_number }}&filter_tag={{request.GET.filter_tag}}&filter_name={{request.GET.filter_name}}"><button type="button" class="btn btn-outline-info" style='margin: 4px 4px 4px 4px'><i class="fa fa-backward" >
+              </i></button>
+              </a>
+       {% endif %}
+
+       <span class="current">
+           Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+       </span>
+
+       {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}&filter_tag={{request.GET.filter_tag}}&filter_name={{request.GET.filter_name}}" >
+              <button type="button" class="btn btn-outline-info" style='margin: 4px 4px 4px 4px'><i class="fa fa-forward" >
+              </i></button></a>
+       {% endif %}
+  </span>
+</div>
+{% endif %}
+
+<a class="btn btn-outline-dark" style="background-color: #077a7a;" href="{% url 'notes:create' %}">Create a new note</a>
+
+{% endblock %}

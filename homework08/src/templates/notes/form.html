@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block extra_head %}
+{% load wysiwyg %}
+{% wysiwyg_setup %}
+{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+
+        <div class="col-4">
+            <nav id="sidebar">
+
+              <div class="new-note">
+                <a href="{% url 'notes:create' %}" class="new-note btn btn-outline-dark">+ New Note</a>
+              </div>
+
+              <ul id="notes">
+              {% if notes %}
+                  {% for note in notes %}
+                    <li data-url="{% url 'notes:update' note.pk %}" style='position: relative; {% if note.pk == object.pk%}border-left: 4px solid #2db9be{% endif %}'>
+                        <div class="note-title btn" style="background-color: #b5e6e5;">{{ note.title }}</div>
+                         {% for tag in note.tags_list %}
+                              {% if tag %}
+                                <div href="{% url 'notes:index' %}?filter_tag={{tag}}"  class="badge" style="background-color: #bccfcf;" style='margin: 0px 0px 0px 0px'>{{tag|lower}}</div>
+                              {% endif %}
+                            {% endfor %}
+                        
+                    </li>
+
+                  {% endfor %}
+                {% else %}
+                  <li>No notes are available.</li>
+              {% endif %}
+                  
+                  
+              </ul>
+            </nav>
+        </div>
+
+        <div class="col-8">
+
+        {% if form.errors %}
+            {% for error in form.non_field_errors %}
+                <div class="alert alert-danger" role="alert">
+                    <strong>{{ error|escape }}</strong>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% if object %}
+        <form action="{% url 'notes:update' object.pk %}" method="post" accept-charset="utf-8">
+        
+        {% else %}
+        <form action="{% url 'notes:create' %}" method="post" accept-charset="utf-8">
+        {% endif %}
+
+            {% csrf_token %}
+            {% for field in form %}
+            <p>
+                {% if field.errors %}
+            	<div class="alert alert-danger" role="alert">
+                    {{ field.errors }}
+            	</div>
+                {% endif %}
+                {{ field }}
+            </p>
+            {% endfor %}
+            <input type="hidden" name="next" value="{{ next }}" />
+
+        {% if object %}
+            <input class="btn btn-outline-dark" type="submit" value="Update Note"/>
+            <div class="note-delete" style='position: absolute; right: 10px; top: 10px;'>
+                      {% if note %}
+                        <form action="{% url 'notes:delete' note.pk %}" method="post" >
+                          {% csrf_token %}
+                          <button class="btn btn-dark"><i class="fa fa-trash" aria-hidden="true"></i></button>
+                        </form>
+                      {% endif %}
+                    </div>
+            
+        {% else %}
+            <input class="btn btn-outline-dark" type="submit" value="Create Note"/>
+        {% endif %}
+        
+        </form>
+
+        </div>
+    </div>
+
+<script type="text/javascript">
+    <a>
+      $("#id_tags").tagsinput(
+
+      );
+    <a/>
+    </script>
+
+{% wysiwyg_editor "id_body" %}
+
+{% endblock %}
